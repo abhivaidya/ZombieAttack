@@ -3,6 +3,7 @@ import 'babylonjs-loaders';
 import { arcRotateCameraFixer } from '../libs/tencentTouchFixers';
 
 import GameUtils from './gameUtils';
+import Enemy, { Zombie, Skeleton, Ghost } from './entities/enemy';
 
 export default class Game 
 {
@@ -16,6 +17,9 @@ export default class Game
     private environment: BABYLON.Mesh;
 
     private keysDown: {[key: number]: boolean} = {};
+
+    private enemies: Enemy[] = [];
+    public static enemyModels: BABYLON.Mesh[] = [];
 
     constructor(canvasElement: string) 
     {
@@ -72,6 +76,12 @@ export default class Game
         this._arcCamera.attachControl(this._canvas, false);
 
         this._assetsManager = new BABYLON.AssetsManager(this._scene);
+        this._assetsManager.addMeshTask('ghost', '', 'assets/3d/character_ghost.glb', '');
+        Game.enemyModels[0] = new BABYLON.Mesh('ghost');
+        this._assetsManager.addMeshTask('skeleton', '', 'assets/3d/character_skeleton.glb', '');
+        Game.enemyModels[1] = new BABYLON.Mesh('skeleton');
+        this._assetsManager.addMeshTask('zombie', '', 'assets/3d/character_zombie.glb', '');
+        Game.enemyModels[2] = new BABYLON.Mesh('zombie');
         this._engine.loadingUIText = 'Loading...';
         this._assetsManager.onProgressObservable.add((task) => {
             const { remainingCount, totalCount } = task;
@@ -79,6 +89,7 @@ export default class Game
         });
 
         this._assetsManager.onTaskSuccessObservable.add((task)=>{
+            
             if(task.name == "environment")
             {
                 this.environment = new BABYLON.Mesh("environment", this._scene);
@@ -90,7 +101,34 @@ export default class Game
                     shadowMap!.renderList!.push(mesh);
                     mesh.receiveShadows = true;
                 });
-            }            
+            }
+
+            if(task.name == "ghost")
+            {
+                (task as BABYLON.MeshAssetTask).loadedMeshes.forEach((mesh)=>{
+                    Game.enemyModels[0].addChild(mesh);
+                });
+
+                Game.enemyModels[0].setEnabled(false);
+            }
+
+            if(task.name == "skeleton")
+            {
+                (task as BABYLON.MeshAssetTask).loadedMeshes.forEach((mesh)=>{
+                    Game.enemyModels[1].addChild(mesh);
+                });
+
+                Game.enemyModels[1].setEnabled(false);
+            }
+
+            if(task.name == "zombie")
+            {
+                (task as BABYLON.MeshAssetTask).loadedMeshes.forEach((mesh)=>{
+                    Game.enemyModels[2].addChild(mesh);
+                });
+
+                Game.enemyModels[2].setEnabled(false);
+            }
         });
 
         this._assetsManager.onTasksDoneObservable.add(()=>{
@@ -111,7 +149,11 @@ export default class Game
         this._engine.runRenderLoop(() => {
             this._scene.render();
 
-            let current = new Date().getTime();
+            // let current = new Date().getTime();
+
+            this.enemies.forEach((enemy)=>{
+                enemy.update();
+            });
         });
 
         window.addEventListener('resize', () => {
@@ -122,6 +164,22 @@ export default class Game
     private handleKeyDown(event: KeyboardEvent) 
     {
         this.keysDown[event.keyCode] = true;
+
+        if(this.keysDown[90])
+        {
+            let zombie = new Zombie();
+            this.enemies.push(zombie);
+        }
+        else if(this.keysDown[88])
+        {
+            let skeleton = new Skeleton();
+            this.enemies.push(skeleton);
+        }
+        else if(this.keysDown[67])
+        {
+            let ghost = new Ghost();
+            this.enemies.push(ghost);
+        }
     }
     
     private handleKeyUp(event: KeyboardEvent) 
