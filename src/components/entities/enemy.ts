@@ -1,8 +1,10 @@
 import Game from "../game";
+import Player from "./player";
 
 export default class Enemy
 {
     public charModel:BABYLON.Mesh;
+    public playerRef:Player;
     
     constructor()
     {
@@ -80,8 +82,8 @@ export class Ghost extends Enemy
 
         this.charModel = Game.enemyModels[0].clone();
                 
-        this.charModel.getChildMeshes()[3].rotation.x = Math.PI / 4;
-        this.charModel.getChildMeshes()[4].rotation.x = Math.PI / 4;
+        this.charModel.getChildMeshes()[3].rotation.x = Math.PI / 2;
+        this.charModel.getChildMeshes()[4].rotation.x = Math.PI / 2;
 
         this.charModel.position.y += 0.25;
     }
@@ -91,7 +93,5 @@ export class Ghost extends Enemy
         this.angle += 0.04;
 
         this.charModel.position.y += Math.sin(this.angle) * 0.00625;
-
-        // this.charModel.children[1].rotateX()
     }
 }

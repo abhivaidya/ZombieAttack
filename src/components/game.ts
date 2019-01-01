@@ -4,6 +4,7 @@ import { arcRotateCameraFixer } from '../libs/tencentTouchFixers';
 
 import GameUtils from './gameUtils';
 import Enemy, { Zombie, Skeleton, Ghost } from './entities/enemy';
+import Player from './entities/player';
 
 export default class Game 
 {
@@ -20,6 +21,8 @@ export default class Game
 
     private enemies: Enemy[] = [];
     public static enemyModels: BABYLON.Mesh[] = [];
+
+    private player: Player;
 
     constructor(canvasElement: string) 
     {
@@ -132,7 +135,7 @@ export default class Game
         });
 
         this._assetsManager.onTasksDoneObservable.add(()=>{
-            
+            this.initGame();
         });
         
         this._assetsManager.load();
@@ -142,6 +145,11 @@ export default class Game
         (ground.material as BABYLON.StandardMaterial).diffuseColor = BABYLON.Color3.FromInts(193, 181, 151);
         (ground.material as BABYLON.StandardMaterial).specularColor = BABYLON.Color3.Black();
         ground.receiveShadows = true;
+    }
+
+    initGame(): void
+    {
+        this.player = new Player();
     }
 
     doRender(): void 
@@ -161,7 +169,7 @@ export default class Game
         })
     }
 
-    private handleKeyDown(event: KeyboardEvent) 
+    handleKeyDown(event: KeyboardEvent) 
     {
         this.keysDown[event.keyCode] = true;
 
@@ -182,7 +190,7 @@ export default class Game
         }
     }
     
-    private handleKeyUp(event: KeyboardEvent) 
+    handleKeyUp(event: KeyboardEvent) 
     {
         this.keysDown[event.keyCode] = false;
     }
