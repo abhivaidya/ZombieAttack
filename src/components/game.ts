@@ -9,6 +9,8 @@ import UIManager from './managers/UIManager';
 
 export default class Game 
 {
+    private static _instance: Game;
+
     private _canvas: HTMLCanvasElement;
     private _engine: BABYLON.Engine;
     private _scene: BABYLON.Scene;
@@ -26,10 +28,17 @@ export default class Game
 
     private player: Player;
 
+    public static get Instance()
+    {
+        return this._instance;
+    }
+
     constructor(canvasElement: string) 
     {
         document.onkeydown = this.handleKeyDown.bind(this);
         document.onkeyup = this.handleKeyUp.bind(this);
+
+        Game._instance = this;
 
         BABYLON.Engine.ShadersRepository = "src/shaders/";
 
@@ -47,10 +56,10 @@ export default class Game
 
         GameUtils.showAxis(15, this._scene);
 
-        this.createBasicEnv();
+        this.setupAndLoadScene();
     }
 
-    createBasicEnv(): void 
+    setupAndLoadScene(): void 
     {
         // let skybox = BABYLON.Mesh.CreateSphere("skyBox", 10, 2500, this._scene);
 
@@ -76,7 +85,7 @@ export default class Game
             'arcam',
             0,
             Math.PI / 2,
-            5,
+            25,
             new BABYLON.Vector3(0, 1, 0),
             this._scene
         );
@@ -145,11 +154,15 @@ export default class Game
         });
 
         this._assetsManager.onTasksDoneObservable.add(()=>{
+            this.createEnvironment();
             this.initGame();
         });
         
         this._assetsManager.load();
+    }
 
+    createEnvironment()
+    {
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 1, this._scene);
         ground.material = new BABYLON.StandardMaterial("ground", this._scene);
         (ground.material as BABYLON.StandardMaterial).diffuseColor = BABYLON.Color3.FromInts(41, 41, 52);
