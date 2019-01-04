@@ -17,4 +17,14 @@ export default class UIManager
         image.verticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP; 
         this.advancedTexture.addControl(image);
     }
+
+    public createText()
+    {
+        let text1 = new GUI.TextBlock();
+        text1.text = "Hello world";
+        text1.color = "purple";
+        text1.fontSize = 40;
+        text1.fontFamily = "fira_sansregular";
+        this.advancedTexture.addControl(text1); 
+    }
 }

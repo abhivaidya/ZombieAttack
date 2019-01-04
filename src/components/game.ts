@@ -5,6 +5,7 @@ import { arcRotateCameraFixer } from '../libs/tencentTouchFixers';
 import GameUtils from './gameUtils';
 import Enemy, { Zombie, Skeleton, Ghost } from './entities/enemy';
 import Player from './entities/player';
+import UIManager from './managers/UIManager';
 
 export default class Game 
 {
@@ -14,6 +15,7 @@ export default class Game
     private _arcCamera: BABYLON.ArcRotateCamera;
     private _shadowGenerator: BABYLON.ShadowGenerator;
     private _assetsManager: BABYLON.AssetsManager;
+    private _uiManager: UIManager;
 
     private environment: BABYLON.Mesh;
 
@@ -39,6 +41,8 @@ export default class Game
         this._scene.fogColor = new BABYLON.Color3(0.8, 0.83, 0.8);
         this._scene.collisionsEnabled = true;
         this._scene.gravity = new BABYLON.Vector3(0, 0, 0);
+
+        this._uiManager = new UIManager();
 
         this.createBasicEnv();
     }
@@ -85,7 +89,9 @@ export default class Game
         Game.enemyModels[1] = new BABYLON.Mesh('skeleton');
         this._assetsManager.addMeshTask('zombie', '', 'assets/3d/character_zombie.glb', '');
         Game.enemyModels[2] = new BABYLON.Mesh('zombie');
+
         this._engine.loadingUIText = 'Loading...';
+        
         this._assetsManager.onProgressObservable.add((task) => {
             const { remainingCount, totalCount } = task;
             this._engine.loadingUIText = 'Loading the scene. ' + remainingCount + ' out of ' + totalCount + ' items still need to be loaded.';
@@ -150,6 +156,8 @@ export default class Game
     initGame(): void
     {
         this.player = new Player();
+
+        this._uiManager.createText();
     }
 
     doRender(): void 
