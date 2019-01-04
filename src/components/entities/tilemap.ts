@@ -1,5 +1,7 @@
 export default class TileMap
 {
+    private mesh: BABYLON.Mesh;
+
     constructor()
     {
         this.buildMesh();
@@ -7,9 +9,9 @@ export default class TileMap
 
     private buildMesh()
     {
-        let mesh = new BABYLON.Mesh('tile');
+        this.mesh = new BABYLON.Mesh('tile');
         
         let vertexData = BABYLON.VertexData.CreatePlane({size: 5, width: 5, height:5});
-        vertexData.applyToMesh(mesh, false);
+        vertexData.applyToMesh(this.mesh, false);
     }
 }

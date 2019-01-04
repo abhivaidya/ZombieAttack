@@ -36,35 +36,39 @@ export default class Game
         this._canvas = document.querySelector(canvasElement) as HTMLCanvasElement;
         this._engine = new BABYLON.Engine(this._canvas, true, {}, true);
         this._scene = new BABYLON.Scene(this._engine);
+        this._scene.clearColor = new BABYLON.Color4(0.2, 0.2, 0.25);
         this._scene.fogMode = BABYLON.Scene.FOGMODE_EXP2;
         this._scene.fogDensity = 0.05;
-        this._scene.fogColor = new BABYLON.Color3(0.8, 0.83, 0.8);
+        this._scene.fogColor = new BABYLON.Color3(0.1, 0.1, 0.12);
         this._scene.collisionsEnabled = true;
         this._scene.gravity = new BABYLON.Vector3(0, 0, 0);
 
         this._uiManager = new UIManager();
+
+        GameUtils.showAxis(15, this._scene);
 
         this.createBasicEnv();
     }
 
     createBasicEnv(): void 
     {
-        let skybox = BABYLON.Mesh.CreateSphere("skyBox", 10, 2500, this._scene);
+        // let skybox = BABYLON.Mesh.CreateSphere("skyBox", 10, 2500, this._scene);
 
-        let shader = new BABYLON.ShaderMaterial("gradient", this._scene, "gradient", {});
-        shader.setFloat("offset", 0);
-        shader.setFloat("exponent", 0.6);
-        shader.setColor3("topColor", BABYLON.Color3.FromInts(0, 119, 255));
-        shader.setColor3("bottomColor", BABYLON.Color3.FromInts(240, 240, 255));
-        shader.backFaceCulling = false;
-        skybox.material = shader;
+        // let shader = new BABYLON.ShaderMaterial("gradient", this._scene, "gradient", {});
+        // shader.setFloat("offset", 0);
+        // shader.setFloat("exponent", 0.6);
+        // shader.setColor3("topColor", BABYLON.Color3.FromInts(0, 119, 255));
+        // shader.setColor3("bottomColor", BABYLON.Color3.FromInts(240, 240, 255));
+        // shader.backFaceCulling = false;
+        // skybox.material = shader;
 
         let d1 = new BABYLON.DirectionalLight("dir", new BABYLON.Vector3(1, -1, -2), this._scene);
         d1.position = new BABYLON.Vector3(-300, 300, 600);
-        d1.intensity = 0.5;
+        d1.diffuse = new BABYLON.Color3(0.2, 0.2, 0.25);
+        // d1.intensity = 0.5;
         
-        let h1 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), this._scene);
-        h1.intensity = 1;
+        let h1 = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, -1), this._scene);
+        // h1.intensity = 1;
 
         this._shadowGenerator = new BABYLON.ShadowGenerator(2048, d1);
 
@@ -91,7 +95,7 @@ export default class Game
         Game.enemyModels[2] = new BABYLON.Mesh('zombie');
 
         this._engine.loadingUIText = 'Loading...';
-        
+
         this._assetsManager.onProgressObservable.add((task) => {
             const { remainingCount, totalCount } = task;
             this._engine.loadingUIText = 'Loading the scene. ' + remainingCount + ' out of ' + totalCount + ' items still need to be loaded.';
@@ -148,7 +152,7 @@ export default class Game
 
         let ground = BABYLON.Mesh.CreateGround("ground", 200, 200, 1, this._scene);
         ground.material = new BABYLON.StandardMaterial("ground", this._scene);
-        (ground.material as BABYLON.StandardMaterial).diffuseColor = BABYLON.Color3.FromInts(193, 181, 151);
+        (ground.material as BABYLON.StandardMaterial).diffuseColor = BABYLON.Color3.FromInts(41, 41, 52);
         (ground.material as BABYLON.StandardMaterial).specularColor = BABYLON.Color3.Black();
         ground.receiveShadows = true;
     }
@@ -185,6 +189,10 @@ export default class Game
         {
             let zombie = new Zombie();
             this.enemies.push(zombie);
+
+            let shadowMap = this._shadowGenerator.getShadowMap();
+            shadowMap!.renderList!.push(zombie.charModel);
+            console.log(shadowMap);
         }
         else if(this.keysDown[88])
         {

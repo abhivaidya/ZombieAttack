@@ -13,7 +13,7 @@ export default class Enemy
 
     public update()
     {
-
+        console.log("enemy update");
     }
 
     public setPosition(position:BABYLON.Vector3)
@@ -40,17 +40,19 @@ export class Zombie extends Enemy
         this.charModel.getChildMeshes()[2].rotation.y = -Math.PI / 8;
         this.charModel.getChildMeshes()[3].rotation.x = Math.PI / 4;
         this.charModel.getChildMeshes()[4].rotation.x = Math.PI / 4;
+
+        console.log(this.playerRef);
     }
 
     public update()
     {
-        this.headSpeed += Math.random() * 0.04;
+        this.headSpeed += Math.random() * 0.01;
         this.leftArmSpeed += Math.random() * 0.04;
         this.rightArmSpeed += Math.random() * 0.04;
         
-        this.charModel.getChildMeshes()[2].rotation.y = Math.sin(this.headSpeed) * 0.00625;
-        this.charModel.getChildMeshes()[3].rotation.x = Math.sin(this.leftArmSpeed) * 0.00625;
-        this.charModel.getChildMeshes()[4].rotation.x = Math.sin(this.rightArmSpeed) * 0.00625;
+        this.charModel.getChildMeshes()[2].rotation.y = Math.sin(this.headSpeed) * 0.002;
+        this.charModel.getChildMeshes()[3].rotation.x = Math.sin(this.leftArmSpeed) * 0.005;
+        this.charModel.getChildMeshes()[4].rotation.x = Math.sin(this.rightArmSpeed) * 0.005;
     }
 }
 
