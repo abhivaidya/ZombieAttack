@@ -102,6 +102,7 @@ export default class Game
         Game.enemyModels[1] = new BABYLON.Mesh('skeleton');
         this._assetsManager.addMeshTask('zombie', '', 'assets/3d/character_zombie.glb', '');
         Game.enemyModels[2] = new BABYLON.Mesh('zombie');
+        this._assetsManager.addMeshTask('parshuram', '', 'assets/3d/parshuram.glb', '');
 
         this._engine.loadingUIText = 'Loading...';
 
