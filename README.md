@@ -1,1 +1,0 @@
-![Uyir - A tale of my life]
